@@ -151,7 +151,7 @@
 | 類別 | 技術 |
 | :--- | :--- |
 | **核心框架** | Java 21, Spring Boot 3.5.7 |
-| **安全與認證** | Spring Security, JJWT (JSON Web Token 0.12.5) |
+| **安全與認證** | Spring Security, JWT (JSON Web Token 0.12.5) |
 | **資料庫與 ORM** | MySQL 8.0, Spring Data JPA (Hibernate) |
 | **工具與報表** | Apache POI 5.2.5 (Excel 匯出), Lombok, Spring Mail (Email 發送) |
 | **前端 (Frontend)** | Vanilla JavaScript (ES6+ Async/Await), Fetch API, HTML5, CSS3 |
