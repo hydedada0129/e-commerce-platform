@@ -3,8 +3,8 @@
 這是一個功能完整的全端電商平台專案，模擬一個多賣家 (Multi-Seller) 的市集（如蝦皮或 Amazon）。
 
 * **後端 (Backend):** 使用 Java Spring Boot 構建，包含 JWT 安全認證、RESTful API、JPA 資料庫管理和多角色權限控制。
-* **前端 (Frontend):** 使用 Vanilla JavaScript (ES6+), HTML5, 和 CSS3 構建，不依賴任何框架 (like React/Vue)，專注於透過 `fetch` API 實作非同步 (Async/Await) 頁面渲染。
-(目前正在轉換成jQuery/ajax中...)
+* **前端 (Frontend)(目前正在轉換成jQuery/ajax中...):** 使用 Vanilla JavaScript (ES6+), HTML5, 和 CSS3 構建，不依賴任何框架 (like React/Vue)，專注於透過 `fetch` API 實作非同步 (Async/Await) 頁面渲染。
+
 ---
 
 ## ✨ 核心架構亮點 (Core Architecture Highlights)
