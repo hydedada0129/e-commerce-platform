@@ -25,6 +25,11 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+
+//SecurityConfig: 請求處理是否需要token
+
+
+
 /**
  * (關鍵) 這是 SecurityConfig 的「大改版」
  *
@@ -50,18 +55,18 @@ public class SecurityConfig {
 
 	/**
 	 * (保留) 這個 Bean (密碼加密器) 仍然是必需的
+	 * @Bean : 交給 Spring 管理的一個「物件」(Bean)
 	 */
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
+	//CORS configuration: allow frontend connects to server with JWT token
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		// (關鍵)
-		// 我們在允許的列表中，
-		// 加入 "http://localhost:5500" (Live Server 的預設位址)
+		// 允許的網域
 		configuration.setAllowedOrigins(Arrays.asList(
 				"http://localhost:5173", // (Vite，先留著)
 				"http://localhost:3000", // (create-react-app，先留著)
@@ -69,10 +74,11 @@ public class SecurityConfig {
 				"http://localhost:5500" // (Live Server)
 		));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-		configuration.setAllowCredentials(true);
+		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));	//token, json
+		configuration.setAllowCredentials(true);	//allows frontend carrying token
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		//任何 API 都能跨域，只要是前端從允許的網址發出的:
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	}

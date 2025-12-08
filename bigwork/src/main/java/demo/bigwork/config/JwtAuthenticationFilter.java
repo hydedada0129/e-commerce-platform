@@ -17,6 +17,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+/*
+    1. 檢查 Authorization: Bearer xxx
+	2. 沒 token → 放行
+	3. 有 token → 取出 email
+	4. 去資料庫讀使用者資料
+	5. 驗證 token
+	6. 驗證成功 → 將使用者標記為「已登入」
+	7. 讓請求繼續到 Controller
+*/
 
 /**
  * (關鍵) @Component
