@@ -41,6 +41,17 @@
     <version>5.2.5</version>
 </dependency>
 <dependency>
+    <groupId>io.sentry</groupId>
+    <artifactId>sentry-spring-boot-starter-jakarta</artifactId>
+    <version>8.36.0</version>
+</dependency>
+
+<dependency>
+    <groupId>io.sentry</groupId>
+    <artifactId>sentry-logback</artifactId>
+    <version>8.36.0</version>
+</dependency>
+<dependency>
     <groupId>org.apache.poi</groupId>
     <artifactId>poi-ooxml</artifactId>
     <version>5.2.5</version>
@@ -149,5 +160,43 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<!-- Uploads source context to Sentry; only runs when SENTRY_AUTH_TOKEN is set
+		     (e.g. in CI/release builds), so a routine local `./mvnw compile|test|package`
+		     without the token is unaffected. -->
+		<profile>
+			<id>sentry-source-upload</id>
+			<activation>
+				<property>
+					<name>env.SENTRY_AUTH_TOKEN</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>io.sentry</groupId>
+						<artifactId>sentry-maven-plugin</artifactId>
+						<version>0.11.0</version>
+						<extensions>true</extensions>
+						<configuration>
+							<debugSentryCli>true</debugSentryCli>
+							<org>dada-r4</org>
+							<project>java-spring-boot</project>
+							<!-- provided via SENTRY_AUTH_TOKEN env var, never committed -->
+							<authToken>${env.SENTRY_AUTH_TOKEN}</authToken>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>uploadSourceBundle</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>

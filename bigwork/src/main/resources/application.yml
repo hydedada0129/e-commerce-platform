@@ -70,3 +70,11 @@ ecpay:
   client:
     back:
       url: "http://127.0.0.1:5500/html/cart.html"
+
+# --- Sentry (error monitoring) ---
+# DSN is not a secret (safe to embed, same as client-side SDKs) so it isn't routed through Consul.
+# send-default-pii is intentionally left disabled: enabling it forwards IPs and request headers
+# (incl. Authorization/JWT) to Sentry's cloud, which conflicts with this project's Log 遮罩 policy
+# (see docs/後台系統資料保護策略.md P1).
+sentry:
+  dsn: ${SENTRY_DSN:https://b63b600778b6e781fd0d91a8968fb6aa@o4511858675810304.ingest.us.sentry.io/4511858800263168}
