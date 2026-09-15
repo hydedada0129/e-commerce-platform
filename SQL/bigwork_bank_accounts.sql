@@ -29,7 +29,7 @@ CREATE TABLE `bank_accounts` (
   `user_id` bigint NOT NULL,
   `bank_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '銀行名稱',
   `account_holder_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '戶名',
-  `account_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '銀行帳號',
+  `account_number` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '銀行帳號 (加密儲存, AES-256-GCM random IV, base64)',
   PRIMARY KEY (`account_id`),
   UNIQUE KEY `user_id_UNIQUE` (`user_id`) COMMENT '確保一個 User 只有一個帳戶 (一對一)',
   KEY `fk_bank_accounts_users_idx` (`user_id`),
@@ -43,7 +43,7 @@ CREATE TABLE `bank_accounts` (
 
 LOCK TABLES `bank_accounts` WRITE;
 /*!40000 ALTER TABLE `bank_accounts` DISABLE KEYS */;
-INSERT INTO `bank_accounts` VALUES (1,3,'銀行','陳大','88889999'),(2,9,'玉銀行','QAQ','77778888');
+INSERT INTO `bank_accounts` VALUES (1,3,'銀行','陳大','ooiNAqwf3kx+qV5nxZg5fQPBCONvxS4Xoui0kXdrSqEniMre'),(2,9,'玉銀行','QAQ','ZebNZ/OLkzZqwfpXEBFAGmpXD5+Ue6JGWQyoG5fBSBxq6oig');
 /*!40000 ALTER TABLE `bank_accounts` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

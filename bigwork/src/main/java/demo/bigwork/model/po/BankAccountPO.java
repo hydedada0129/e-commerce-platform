@@ -1,6 +1,7 @@
 package demo.bigwork.model.po;
 
 import jakarta.persistence.*;
+import demo.bigwork.crypto.RandomIvStringConverter;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -39,6 +40,10 @@ public class BankAccountPO {
     @Column(name = "account_holder_name", nullable = false, length = 100)
     private String accountHolderName;
 
-    @Column(name = "account_number", nullable = false, length = 50)
+    /**
+     * 加密儲存（Random-IV AES-GCM）。欄位長度放寬以容納 base64 密文。
+     */
+    @Convert(converter = RandomIvStringConverter.class)
+    @Column(name = "account_number", nullable = false, length = 255)
     private String accountNumber;
 }

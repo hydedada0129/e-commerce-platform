@@ -29,6 +29,7 @@ import demo.bigwork.model.vo.ProfileRequestVO;
 import demo.bigwork.model.vo.RegisterRequestVO;
 import demo.bigwork.service.AuthHelperService;
 import demo.bigwork.service.EmailService;
+import demo.bigwork.service.UserSearchIndexService;
 import demo.bigwork.service.UserService;
 import demo.bigwork.service.VerificationCodeService;
 
@@ -42,6 +43,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordResetTokenDAO tokenDAO;
     private final WalletDAO walletDAO; 
     private final AuthHelperService authHelperService;
+    private final UserSearchIndexService userSearchIndexService;
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     // (關鍵新增！)注入application.properties 中的「前端網址」
     @Value("${frontend.reset-password-url}")
@@ -49,10 +51,11 @@ public class UserServiceImpl implements UserService {
 
     // (關鍵) 修改建構子，注入新的 Service
     @Autowired
-    public UserServiceImpl(UserDAO userDAO, PasswordEncoder passwordEncoder, 
+    public UserServiceImpl(UserDAO userDAO, PasswordEncoder passwordEncoder,
                            EmailService emailService, VerificationCodeService codeService,
                            PasswordResetTokenDAO tokenDAO, WalletDAO walletDAO,
-                           AuthHelperService authHelperService) { // <-- 新增
+                           AuthHelperService authHelperService,
+                           UserSearchIndexService userSearchIndexService) { // <-- 新增
         this.userDAO = userDAO;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
@@ -60,6 +63,7 @@ public class UserServiceImpl implements UserService {
         this.tokenDAO = tokenDAO;
         this.walletDAO = walletDAO;
         this.authHelperService = authHelperService; // <-- 新增
+        this.userSearchIndexService = userSearchIndexService;
     }
 
     // (重構) 我們將 register 邏輯抽出來共用
@@ -123,6 +127,9 @@ public class UserServiceImpl implements UserService {
 
         // 5. 儲存到資料庫
         UserPO savedUser = userDAO.save(newUser);
+
+        // 5b. 重建 phone/address 的模糊搜尋索引（加密欄位，需另建 blind index）
+        userSearchIndexService.reindex(savedUser);
 
         // 6. (新) 註冊成功，移除驗證碼
         codeService.removeCode(requestVO.getEmail());
@@ -285,9 +292,14 @@ public class UserServiceImpl implements UserService {
         userToUpdate.setPhone(requestVO.getPhone());
         userToUpdate.setDefaultAddress(requestVO.getAddress());
         
-        // 3. (儲存) 
+        // 3. (儲存)
         // 呼叫 save() 執行 UPDATE SQL
         logger.info("使用者 {} 正在更新個人資料", userToUpdate.getEmail());
-        return userDAO.save(userToUpdate);
+        UserPO savedUser = userDAO.save(userToUpdate);
+
+        // 4. 重建 phone/address 的模糊搜尋索引（加密欄位，需另建 blind index）
+        userSearchIndexService.reindex(savedUser);
+
+        return savedUser;
     }
 }
