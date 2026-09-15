@@ -1,0 +1,46 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: bigwork-mysql
+    restart: unless-stopped
+    entrypoint: ["/consul-entrypoint.sh"]
+    environment:
+      MYSQL_DATABASE: bigwork
+      CONSUL_HTTP_ADDR: "http://consul:8500"
+    depends_on:
+      consul:
+        condition: service_healthy
+    ports:
+      - "3306:3306"
+    volumes:
+      - bigwork-mysql-data:/var/lib/mysql
+      - ./SQL:/docker-entrypoint-initdb.d/sql:ro
+      - ./docker/init-db.sh:/docker-entrypoint-initdb.d/00-init-db.sh:ro
+      - ./docker/mysql-consul-entrypoint.sh:/consul-entrypoint.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p\"$(cat /tmp/mysql-root-pw 2>/dev/null)\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+  consul:
+    image: hashicorp/consul:1.19
+    container_name: bigwork-consul
+    restart: unless-stopped
+    command: "agent -dev -client=0.0.0.0 -ui"
+    ports:
+      - "8500:8500"   # HTTP API + Web UI
+      - "8600:8600/tcp"
+      - "8600:8600/udp"
+    volumes:
+      - bigwork-consul-data:/consul/data
+    healthcheck:
+      test: ["CMD", "consul", "members"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  bigwork-mysql-data:
+  bigwork-consul-data:

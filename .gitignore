@@ -1,0 +1,15 @@
+/docs
+
+# Editor/tooling backup files (e.g. CLAUDE.md.backup.<timestamp>, .gitignore.backup.<timestamp>)
+*.backup.*
+
+# Local secret / credential files (never commit real keys/certs)
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.jks
+
+# Third-party downloaded binaries — fetch locally per README instead of committing
+ngrok.exe

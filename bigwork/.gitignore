@@ -4,6 +4,12 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### Local secrets (referenced by application.yml's spring.config.import) ###
+application-secret.properties
+
+### Uploaded product images (existing seed images stay tracked; blocks new runtime uploads) ###
+uploads/*
+
 ### STS ###
 .apt_generated
 .classpath
