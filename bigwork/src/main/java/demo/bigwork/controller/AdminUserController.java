@@ -31,16 +31,16 @@ public class AdminUserController {
         this.adminUserManageService = adminUserManageService;
     }
 
-    // GET /api/admin/users/buyers
+    // GET /api/admin/users/buyers?keyword=xxx (keyword matches phone or address, optional)
     @GetMapping("/buyers")
-    public List<AdminUserSummaryVO> listBuyers() {
-        return adminUserManageService.listUsersByRole(UserRole.BUYER);
+    public List<AdminUserSummaryVO> listBuyers(@RequestParam(required = false) String keyword) {
+        return adminUserManageService.listUsersByRole(UserRole.BUYER, keyword);
     }
 
-    // GET /api/admin/users/sellers
+    // GET /api/admin/users/sellers?keyword=xxx (keyword matches phone or address, optional)
     @GetMapping("/sellers")
-    public List<AdminUserSummaryVO> listSellers() {
-        return adminUserManageService.listUsersByRole(UserRole.SELLER);
+    public List<AdminUserSummaryVO> listSellers(@RequestParam(required = false) String keyword) {
+        return adminUserManageService.listUsersByRole(UserRole.SELLER, keyword);
     }
 
     // GET /api/admin/users/buyers/{id}/orders

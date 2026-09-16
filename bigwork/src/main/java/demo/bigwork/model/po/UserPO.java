@@ -19,6 +19,9 @@ import jakarta.persistence.GenerationType;
 import org.hibernate.annotations.CreationTimestamp; // Hibernate 提供的自動時間戳
 
 import demo.bigwork.model.enums.UserRole;
+import demo.bigwork.crypto.DeterministicStringConverter;
+import demo.bigwork.crypto.RandomIvStringConverter;
+import jakarta.persistence.Convert;
 
 /**
  * PO (Persistence Object) - 使用 JPA 和 Lombok
@@ -83,22 +86,30 @@ public class UserPO {
     /**
      * 管理員原編（管理員編號）
      * 只有 role = ADMIN 才會有值，其它角色可以是 null
+     * 加密儲存（Deterministic AES-GCM）：admin_code 需支援 exact-match 查詢
+     * (findByAdminCode) 及 DB UNIQUE 限制，故使用確定性 IV 推導，
+     * 相同明碼永遠產生相同密文。欄位長度放寬以容納 base64 密文。
      */
-    @Column(name = "admin_code", length = 50, unique = true)
+    @Convert(converter = DeterministicStringConverter.class)
+    @Column(name = "admin_code", length = 255, unique = true)
     private String adminCode;
 
     /**
-     * @Column(name = "phone", length = 20)
-     * 對應 "phone" 欄位 (允許 null)。
+     * @Column(name = "phone", length = 255)
+     * 對應 "phone" 欄位 (允許 null)。加密儲存（Random-IV AES-GCM），
+     * 欄位長度放寬以容納 base64 密文（IV + ciphertext + tag）。
      */
-    @Column(name = "phone", length = 20)
+    @Convert(converter = RandomIvStringConverter.class)
+    @Column(name = "phone", length = 255)
     private String phone;
 
     /**
-     * @Column(name = "default_address", length = 500)
-     * 對應 "default_address" 欄位 (允許 null)。
+     * @Column(name = "default_address", length = 1024)
+     * 對應 "default_address" 欄位 (允許 null)。加密儲存（Random-IV AES-GCM），
+     * 欄位長度放寬以容納 base64 密文。
      */
-    @Column(name = "default_address", length = 500)
+    @Convert(converter = RandomIvStringConverter.class)
+    @Column(name = "default_address", length = 1024)
     private String defaultAddress;
 
     /**

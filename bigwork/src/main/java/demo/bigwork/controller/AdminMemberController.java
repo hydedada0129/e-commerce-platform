@@ -28,23 +28,25 @@ public class AdminMemberController {
 
     /**
      * 買家管理：取得所有買家列表
-     * GET /api/admin/members/buyers
+     * GET /api/admin/members/buyers?keyword=xxx（比對電話或地址，選填）
      */
     @GetMapping("/buyers")
-    public ResponseEntity<List<AdminUserSummaryVO>> listBuyers() {
+    public ResponseEntity<List<AdminUserSummaryVO>> listBuyers(
+            @RequestParam(required = false) String keyword) {
         return ResponseEntity.ok(
-                adminMemberService.listUsersByRole(UserRole.BUYER)
+                adminMemberService.listUsersByRole(UserRole.BUYER, keyword)
         );
     }
 
     /**
      * 賣家管理：取得所有賣家列表
-     * GET /api/admin/members/sellers
+     * GET /api/admin/members/sellers?keyword=xxx（比對電話或地址，選填）
      */
     @GetMapping("/sellers")
-    public ResponseEntity<List<AdminUserSummaryVO>> listSellers() {
+    public ResponseEntity<List<AdminUserSummaryVO>> listSellers(
+            @RequestParam(required = false) String keyword) {
         return ResponseEntity.ok(
-                adminMemberService.listUsersByRole(UserRole.SELLER)
+                adminMemberService.listUsersByRole(UserRole.SELLER, keyword)
         );
     }
 

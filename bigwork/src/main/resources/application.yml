@@ -1,0 +1,80 @@
+spring:
+  application:
+    name: bigwork
+
+  config:
+    import: "consul:localhost:8500"
+
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      config:
+        enabled: true
+        format: yaml
+        prefix: config
+        data-key: data
+        fail-fast: true
+
+  # spring.datasource.* (url, hikari pool settings) supplied by Consul KV config/bigwork/data
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: UTC # ensure DB timestamp is in UTC
+    hibernate:
+      ddl-auto: validate
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+server:
+  port: 8080
+
+# --- JWT --- (jwt.secret supplied by Consul KV config/bigwork/data)
+jwt:
+  expiration:
+    ms: 86400000
+
+# --- Field-level encryption --- (security.data-encryption-key supplied by Consul KV config/bigwork/data)
+
+# --- File Upload ---
+file:
+  storage:
+    location: ./uploads
+
+# --- Reset Password Redirect ---
+frontend:
+  reset-password-url: "http://127.0.0.1:5500/html/reset-password.html"
+
+# --- ECPay (merchantId/hashKey/hashIV supplied by Consul KV config/bigwork/data) ---
+ecpay:
+  serviceUrl: "https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5"
+  return:
+    url: ${ECPAY_RETURN_URL}
+  client:
+    back:
+      url: "http://127.0.0.1:5500/html/cart.html"
+
+# --- Sentry (error monitoring) ---
+# DSN is not a secret (safe to embed, same as client-side SDKs) so it isn't routed through Consul.
+# send-default-pii is intentionally left disabled: enabling it forwards IPs and request headers
+# (incl. Authorization/JWT) to Sentry's cloud, which conflicts with this project's Log 遮罩 policy
+# (see docs/後台系統資料保護策略.md P1).
+sentry:
+  dsn: ${SENTRY_DSN:https://b63b600778b6e781fd0d91a8968fb6aa@o4511858675810304.ingest.us.sentry.io/4511858800263168}

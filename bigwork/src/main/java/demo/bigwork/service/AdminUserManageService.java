@@ -9,7 +9,12 @@ import java.util.List;
 
 public interface AdminUserManageService {
 
-    List<AdminUserSummaryVO> listUsersByRole(UserRole role);
+    /**
+     * @param keyword optional phone/address substring filter (case-insensitive).
+     *                Fields are encrypted at rest, so this filters in-memory after
+     *                decryption rather than via SQL LIKE. Null/blank = no filter.
+     */
+    List<AdminUserSummaryVO> listUsersByRole(UserRole role, String keyword);
 
     List<OrderResponseVO> listOrdersByBuyer(Long buyerId);
 
